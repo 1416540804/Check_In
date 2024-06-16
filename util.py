@@ -1,8 +1,9 @@
-from PIL import Image
-import cv2, numpy as np
+# from PIL import Image
+# import cv2, ddddocr
+import numpy as np
 from retrying import retry
 from selenium import webdriver
-import os, sys, time, ddddocr, requests
+import os, sys, time, requests
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -30,23 +31,23 @@ def is_visible(driver, locator, timeout=10):
     except TimeoutException:
         return False
 
-def Ocr_Captcha(driver, locator, img_path): # 验证码识别
-    propertery = driver.find_element_by_xpath(locator)
-    driver.save_screenshot(img_path)
-    img = Image.open(img_path)
-    location = propertery.location
-    size = propertery.size
-    left = location['x']
-    top = location['y']
-    right = left + size['width']
-    bottom = top + size['height']
-    image = img.crop((left, top, right, bottom))  # 左、上、右、下
-    image.save(img_path)
-    ocr = ddddocr.DdddOcr()
-    with open(img_path, 'rb') as f:
-        img_bytes = f.read()
-    res = ocr.classification(img_bytes)
-    return res
+# def Ocr_Captcha(driver, locator, img_path): # 验证码识别
+#     propertery = driver.find_element_by_xpath(locator)
+#     driver.save_screenshot(img_path)
+#     img = Image.open(img_path)
+#     location = propertery.location
+#     size = propertery.size
+#     left = location['x']
+#     top = location['y']
+#     right = left + size['width']
+#     bottom = top + size['height']
+#     image = img.crop((left, top, right, bottom))  # 左、上、右、下
+#     image.save(img_path)
+#     ocr = ddddocr.DdddOcr()
+#     with open(img_path, 'rb') as f:
+#         img_bytes = f.read()
+#     res = ocr.classification(img_bytes)
+#     return res
 
 class Track(object):
     # 处理前图片
@@ -111,34 +112,34 @@ class Track(object):
         with open(slider, 'wb') as f:
             f.write(r.content)
 
-    def get_slide_distance(self, slider_url, background_url):
+#     def get_slide_distance(self, slider_url, background_url):
 
-        # 下载验证码背景图,滑动图片
-        self.onload_save_img(slider_url, self.slider)
-        self.onload_save_img(background_url, self.background)
-        # 读取进行色度图片，转换为numpy中的数组类型数据
-        slider_pic = cv2.imread(self.slider, 0)
-        background_pic = cv2.imread(self.background, 0)
-        # 获取缺口图数组的形状 -->缺口图的宽和高
-        width, height = slider_pic.shape[::-1]
+#         # 下载验证码背景图,滑动图片
+#         self.onload_save_img(slider_url, self.slider)
+#         self.onload_save_img(background_url, self.background)
+#         # 读取进行色度图片，转换为numpy中的数组类型数据
+#         slider_pic = cv2.imread(self.slider, 0)
+#         background_pic = cv2.imread(self.background, 0)
+#         # 获取缺口图数组的形状 -->缺口图的宽和高
+#         width, height = slider_pic.shape[::-1]
 
-        cv2.imwrite(self.background_bak, background_pic)
-        cv2.imwrite(self.slider_bak, slider_pic)
-        # 读取另存的滑块图
-        slider_pic = cv2.imread(self.slider_bak)
-        # 进行色彩转换
-        slider_pic = cv2.cvtColor(slider_pic, cv2.COLOR_BGR2GRAY)
-        # 获取色差的绝对值
-        slider_pic = abs(255 - slider_pic)
-        # 保存图片
-        cv2.imwrite(self.slider_bak, slider_pic)
-        # 读取滑块
-        slider_pic = cv2.imread(self.slider_bak)
-        # 读取背景图
-        background_pic = cv2.imread(self.background_bak)
-        # 比较两张图的重叠区域
-        result = cv2.matchTemplate(slider_pic, background_pic, cv2.TM_CCOEFF_NORMED)
-        # 获取图片的缺口位置
-        top, left = np.unravel_index(result.argmax(), result.shape)
-        # 背景图中的图片缺口坐标位置
-        return left * 340 / 552
+#         cv2.imwrite(self.background_bak, background_pic)
+#         cv2.imwrite(self.slider_bak, slider_pic)
+#         # 读取另存的滑块图
+#         slider_pic = cv2.imread(self.slider_bak)
+#         # 进行色彩转换
+#         slider_pic = cv2.cvtColor(slider_pic, cv2.COLOR_BGR2GRAY)
+#         # 获取色差的绝对值
+#         slider_pic = abs(255 - slider_pic)
+#         # 保存图片
+#         cv2.imwrite(self.slider_bak, slider_pic)
+#         # 读取滑块
+#         slider_pic = cv2.imread(self.slider_bak)
+#         # 读取背景图
+#         background_pic = cv2.imread(self.background_bak)
+#         # 比较两张图的重叠区域
+#         result = cv2.matchTemplate(slider_pic, background_pic, cv2.TM_CCOEFF_NORMED)
+#         # 获取图片的缺口位置
+#         top, left = np.unravel_index(result.argmax(), result.shape)
+#         # 背景图中的图片缺口坐标位置
+#         return left * 340 / 552

@@ -7,14 +7,16 @@ password = sys.argv[2] # 登录密码
 def muacloud():
     try:
         driver = get_web_driver()
-#         driver.get("https://muacloud.cloud/auth/login")
-        driver.get("http://subyyds.xyz/user")
+#         driver.get("https://12o.ooo/auth/login")
+        driver.get("https://12o.ooo/auth/login")
         driver.find_element_by_xpath("//*[@id='email']").send_keys(username)
         driver.find_element_by_xpath("//*[@id='password']").send_keys(password)
         driver.find_element_by_xpath("//*[@id='login_submit']").click()
 
         if driver.find_elements_by_xpath("//*[@id='checkin']") != []:
-            driver.find_element_by_xpath("//*[@id='checkin']").click()
+            button = driver.find_element_by_xpath("//*[@id='checkin']")
+            driver.execute_script("arguments[0].click();", button)
+            # driver.find_element_by_xpath("//*[@id='checkin']").click()
             print('muacloud签到成功')
     except:
         raise
